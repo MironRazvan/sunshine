@@ -207,7 +207,6 @@ const useLocationStore = create<Location>((set, get) => ({
 
             const data = await response.json()
             const newObj = {daily:data.forecast.forecastday, name: data.location.name}
-            console.log(newObj)
             set({loading: false, weeklyData: [newObj]})
         } catch (error: any) {
             set({error: error.message, loading: false})

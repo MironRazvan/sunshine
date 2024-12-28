@@ -5,7 +5,7 @@ import DetailedView from './DetailedView'
 import ReactLoading from 'react-loading'
 
 const Today: React.FC = () => {
-    const { loading, currentLocation, hourlyData, weatherData, fetchTodayWeather, fetchHourlyWeather, fetchWeeklyWeather } = useLocationStore()
+    const { loading, currentLocation, hourlyData, weatherData, weeklyData, fetchTodayWeather, fetchHourlyWeather, fetchWeeklyWeather } = useLocationStore()
     const [screenSize, setScreenSize] = useState(window.innerWidth)
 
     useEffect(() => {
@@ -16,6 +16,14 @@ const Today: React.FC = () => {
             fetchWeeklyWeather(currentLocation)
         }
     }, [weatherData, hourlyData, currentLocation])
+
+    useEffect(() => {
+        if(weeklyData[0]?.name !== currentLocation?.name) {
+            fetchTodayWeather(currentLocation)
+            fetchHourlyWeather(currentLocation)
+            fetchWeeklyWeather(currentLocation)
+        }
+    }, [])
 
     // useEffect for screen resizing
     useEffect(() => {

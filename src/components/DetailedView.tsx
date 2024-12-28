@@ -7,8 +7,6 @@ const DetailedView: React.FC = () => {
     const [isLoaded, setIsLoaded] = useState(false)
     const [screenSize, setScreenSize] = useState(window.innerWidth)
     
-    console.log(weeklyData)
-
     // deriving minTemp and maxTemp for the slider
     const baseMinTemperatures = weeklyData && weeklyData[0]?.daily?.map(item => item.day.mintemp_c) || []
     const baseMaxTemperatures = weeklyData && weeklyData[0]?.daily?.map(item => item.day.maxtemp_c) || []
@@ -16,7 +14,7 @@ const DetailedView: React.FC = () => {
     const maxTemp = Math.round(Math.max(...baseMaxTemperatures))
 
     useEffect(() => {
-        if(currentLocation.name !== weeklyData[0].name) {
+        if(currentLocation.name !== weeklyData[0]?.name) {
             fetchWeeklyWeather(currentLocation)
         }
     }, [])
@@ -76,7 +74,7 @@ const DetailedView: React.FC = () => {
                 )}
                 <div className='flex flex-col items-center divide-y'>
                 {
-                    weeklyData[0].daily?.map((info) => (
+                    weeklyData[0]?.daily?.map((info) => (
                         <div key={info.date_epoch} className='grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 px-4 py-4 md:max-w-screen-md w-screen'>
                             <p className='font-bold'>{weekdayConverter(info.date)}</p>
                             <div className='w-8 aspect-square'>
