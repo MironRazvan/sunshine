@@ -76,7 +76,7 @@ const DetailedView: React.FC = () => {
                 )}
                 <div className='flex flex-col items-center divide-y'>
                 {
-                    weeklyData[0].daily.map((info) => (
+                    weeklyData[0].daily?.map((info) => (
                         <div key={info.date_epoch} className='grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 px-4 py-4 md:max-w-screen-md w-screen'>
                             <p className='font-bold'>{weekdayConverter(info.date)}</p>
                             <div className='w-8 aspect-square'>

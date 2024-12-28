@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import useLocationStore from '../utils/locationStore'
 import { ChevronsDown, ChevronsUp, Sunrise, Sunset } from 'lucide-react'
 import DetailedView from './DetailedView'
+import ReactLoading from 'react-loading'
 
 const Today: React.FC = () => {
     const { loading, currentLocation, hourlyData, weatherData, fetchTodayWeather, fetchHourlyWeather, fetchWeeklyWeather } = useLocationStore()
@@ -38,9 +39,12 @@ const Today: React.FC = () => {
         return 'day'
     }
 
-
     return (        
-        !loading && currentLocation.name && weatherData.condition?.text?.length && hourlyData.date? (
+        loading ? 
+            <div className='flex flex-col flex-1 dark:bg-blue-950 align-middle justify-center items-center'>
+                <ReactLoading type='bubbles' />
+            </div> 
+        : currentLocation.name && weatherData.condition?.text?.length && hourlyData.date? (
             <div className='flex flex-col flex-1 dark:bg-blue-950'>
                 <div className='flex flex-col items-center justify-center shadow-lg md:max-w-screen-sm dark:bg-slate-600 dark:text-gray-50 w-full h-max mx-auto p-4 my-4 rounded-md bg-sky-100 overflow-y-auto'>
                     <h1 className='font-bold text-2xl md:text-3xl'>{currentLocation.name}</h1>
@@ -88,7 +92,7 @@ const Today: React.FC = () => {
                         </div>
                         <div>
                             <p className='text-2xl pb-2'>{weatherData.humidity}%</p>
-                            <p className='text-xs italic opacity-60 pb-1'>Dew point: {weatherData.dewpoint_c}°</p>
+                            <span className='text-xs italic opacity-60 pb-1'>Dew point: {weatherData.dewpoint_c}°</span>
                         </div>
                     </div>
                     <div className="relative border-2 border-gray-600 rounded-lg mt-2 px-4 pt-4 w-full">
@@ -106,7 +110,7 @@ const Today: React.FC = () => {
                         </div>
                         <div>
                             <p className='text-2xl pb-2'>{weatherData.wind_kph} Km/h</p>
-                            <p className='text-xs italic opacity-60 pb-1'>Wind direction: {weatherData.wind_dir}</p>
+                            <span className='text-xs italic opacity-60 pb-1'>Wind direction: {weatherData.wind_dir}</span>
                         </div>
                     </div>
                     <div className="relative border-2 border-gray-600 rounded-lg mt-2 px-4 pt-4 w-full">
