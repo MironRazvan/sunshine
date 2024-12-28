@@ -79,8 +79,8 @@ const Today: React.FC = () => {
                             <span className="dark:text-gray-50">Astrology</span>
                         </div>
                         <div>
-                            <p className='pb-2'>Sunrise: {hourlyData.astro.sunrise}</p>
-                            <p className='pb-2'>Sunset: {hourlyData.astro.sunset}</p>
+                            <p className='pb-2 text-sm sm:text-base'>Sunrise: {hourlyData.astro.sunrise}</p>
+                            <p className='pb-2 text-sm sm:text-base'>Sunset: {hourlyData.astro.sunset}</p>
                         </div>
                     </div>
                     <div className="relative border-2 border-gray-600 rounded-lg mt-2 px-4 pt-4 w-full">
@@ -97,14 +97,14 @@ const Today: React.FC = () => {
                             <span className="dark:text-gray-50">Other</span>
                         </div>
                         <div>
-                            <p className='pb-2'>Precipitations: {weatherData.precip_mm}mm</p>
-                            <p className='pb-2'>UV index: {Math.round(weatherData.uv)}</p>
+                            <p className='pb-2 text-sm sm:text-base'>Precipitations: {weatherData.precip_mm}mm</p>
+                            <p className='pb-2 text-sm sm:text-base'>UV index: {Math.round(weatherData.uv)}</p>
                         </div>
                     </div>
                 </div>
             </div>
         ) : (
-            <div className='w-full h-dvh flex flex-col items-center justify-center overflow-y-auto'>
+            <div className='w-full h-dvh flex flex-col items-center justify-center overflow-y-auto dark:bg-blue-950 dark:text-gray-50'>
                 <h1>No location found!</h1>
                 <h4>Please enter a location to see the weather.</h4>
             </div>

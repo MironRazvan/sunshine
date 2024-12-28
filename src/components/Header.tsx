@@ -35,14 +35,6 @@ const Header: React.FC = () => {
                 <Link to='/favorites' className="text-white border-b-2 border-white w-full no-underline pl-4 mb-4" onClick={() => setMenuOpen(!menuOpen)}>Favorites</Link>
                 <Link to='/about' className="text-white border-b-2 border-white w-full no-underline pl-4 " onClick={() => setMenuOpen(!menuOpen)}>About Me</Link>
             </Menu>
-            {/* {menuOpen && (
-                <nav className="fixed top-14 left-0 w-full px-2 bg-gray-500 flex flex-col items-start space-y-4 py-4 md:hidden transition-opacity">
-                    <Link to='/' className="text-white border-b-2 border-white no-underline" onClick={() => setMenuOpen(!menuOpen)}>Today</Link>
-                    <Link to='/nextweek' className="text-white border-b-2 border-white no-underline" onClick={() => setMenuOpen(!menuOpen)}>Next Week</Link>
-                    <Link to='/favorites' className="text-white border-b-2 border-white no-underline" onClick={() => setMenuOpen(!menuOpen)}>Favorites</Link>
-                    <Link to='/about' className="text-white border-b-2 border-white no-underline" onClick={() => setMenuOpen(!menuOpen)}>About Me</Link>
-                </nav>
-            )} */}
             <div className='p-2 min-w-max m-auto md:m-0 rounded-md text-center flex gap-1'>
                 <h3 className='self-center text-2xl md:text-3xl dark:text-gray-50 font-["Carattere"]' onClick={isScreenSmall ? () => navigate('/') : undefined}>Sunshine</h3>
                 {theme === 'dark' && <Sun className='self-center cursor-pointer dark:text-gray-50' onClick={toggleTheme}/>}
