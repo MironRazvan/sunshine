@@ -49,20 +49,23 @@ export interface HourlyData {
 }
 
 export interface WeeklyData {
-    date: string,
-    date_epoch: number,
-    day: {
-        avgtemp_c: number,
-        maxtemp_c: number,
-        mintemp_c: number,
-        condition: {
-            icon: string,
-            text: string,
-        }
-    },
-    hour: {
-        chance_of_rain: number,
-        chance_of_snow: number,
+    name: string,
+    daily: {
+        date: string,
+        date_epoch: number,
+        day: {
+            avgtemp_c: number,
+            maxtemp_c: number,
+            mintemp_c: number,
+            condition: {
+                icon: string,
+                text: string,
+            }
+        },
+        hour: {
+            chance_of_rain: number,
+            chance_of_snow: number,
+        }[],
     }[],
 }
 
@@ -94,7 +97,7 @@ const useLocationStore = create<Location>((set, get) => ({
     favoriteLocations: JSON.parse(localStorage.getItem("favoriteLocations") || "[]"),
     weatherData: {} as WeatherData,
     hourlyData: {} as HourlyData,
-    weeklyData: [],
+    weeklyData: [] as WeeklyData[],
     loading: false,
     error: "",
     setCurrentLocation: (location: LocationProps) => {
@@ -203,7 +206,9 @@ const useLocationStore = create<Location>((set, get) => ({
                 throw new Error("Failed to fetch weekly weather data")
 
             const data = await response.json()
-            set({loading: false, weeklyData: data.forecast.forecastday})
+            const newObj = {daily:data.forecast.forecastday, name: data.location.name}
+            console.log(newObj)
+            set({loading: false, weeklyData: [newObj]})
         } catch (error: any) {
             set({error: error.message, loading: false})
         }

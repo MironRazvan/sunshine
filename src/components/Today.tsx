@@ -14,7 +14,7 @@ const Today: React.FC = () => {
             fetchHourlyWeather(currentLocation)
             fetchWeeklyWeather(currentLocation)
         }
-    }, [weatherData, hourlyData])
+    }, [weatherData, hourlyData, currentLocation])
 
     // useEffect for screen resizing
     useEffect(() => {
