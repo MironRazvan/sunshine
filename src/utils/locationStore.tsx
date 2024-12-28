@@ -90,7 +90,7 @@ const useLocationStore = create<Location>((set, get) => ({
     fetchLocationList: async (location: string) => {
         set({loading: true, error: ""});
         try {
-            const response = await fetch(`http://api.weatherapi.com/v1/search.json?key=0ee9972de4b34615a3b171137242612&q=${location}`);
+            const response = await fetch(`https://api.weatherapi.com/v1/search.json?key=0ee9972de4b34615a3b171137242612&q=${location}`);
             if (!response.ok) {
                 throw new Error("Failed to fetch location list");
             }
