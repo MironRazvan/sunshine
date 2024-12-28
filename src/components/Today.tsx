@@ -4,7 +4,7 @@ import { ChevronsDown, ChevronsUp, Sunrise, Sunset } from 'lucide-react'
 import DetailedView from './DetailedView'
 
 const Today: React.FC = () => {
-    const { loading, currentLocation, hourlyData, weatherData, fetchTodayWeather, fetchHourlyWeather } = useLocationStore()
+    const { loading, currentLocation, hourlyData, weatherData, fetchTodayWeather, fetchHourlyWeather, fetchWeeklyWeather } = useLocationStore()
     const [screenSize, setScreenSize] = useState(window.innerWidth)
 
     useEffect(() => {
@@ -12,6 +12,7 @@ const Today: React.FC = () => {
             console.log('Fetching weather data...')
             fetchTodayWeather(currentLocation)
             fetchHourlyWeather(currentLocation)
+            fetchWeeklyWeather(currentLocation)
         }
     }, [weatherData, hourlyData])
 
