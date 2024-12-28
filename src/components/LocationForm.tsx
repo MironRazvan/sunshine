@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { CircleX, Map, Search } from 'lucide-react'
 import LocationList from './LocationList'
 import { LocationProps } from '../utils/locationStore'
+import ReactLoading from 'react-loading'
 
 /*
 * The LocationForm component will be used to allow users to enter a location.
@@ -22,7 +23,8 @@ const LocationForm: React.FC = () => {
         clearLocationsList,
         clearCurrentLocation,
         fetchTodayWeather,
-        fetchHourlyWeather
+        fetchHourlyWeather,
+        fetchWeeklyWeather,
     } = useLocationStore()
     const [location, setLocation] = React.useState('')
     const isSmallScreen = window.innerWidth < 640
@@ -31,12 +33,17 @@ const LocationForm: React.FC = () => {
         if (!loading && currentLocation.name) {
             fetchTodayWeather(currentLocation)
             fetchHourlyWeather(currentLocation)
+            fetchWeeklyWeather(currentLocation)
         }
     }, [currentLocation])
+    
+    const removeDiacritics = (input: string): string => {
+        return input.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    }
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        fetchLocationList(location)
+        fetchLocationList(removeDiacritics(location))
     }
 
     const handleLocationChoose = (location: LocationProps) => {
@@ -83,8 +90,10 @@ const LocationForm: React.FC = () => {
                 </button>
             </form>
             <br className='w-full'/>
-            {loading && <p>Loading...</p>}
-            <LocationList onClick={handleLocationChoose}/>
+            {loading && <div className='flex align-middle justify-center'>
+                <ReactLoading type='spinningBubbles' className='w-8 h-8' />
+            </div>}
+            {!loading && <LocationList onClick={handleLocationChoose}/>}
             <br className='w-full' />
         </div>
     )
