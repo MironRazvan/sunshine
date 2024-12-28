@@ -19,7 +19,7 @@ const DetailedView: React.FC = () => {
             fetchWeeklyWeather(currentLocation)
             setIsLoaded(true)
         }
-    }, [weeklyData])
+    }, [weeklyData, currentLocation])
 
     // useEffect for screen resizing
     useEffect(() => {
@@ -55,7 +55,7 @@ const DetailedView: React.FC = () => {
     return (
         currentLocation.name && weeklyData ? (
             <div className='flex-1 flex flex-col dark:bg-blue-950 dark:text-gray-50'>
-                {currentLocation.name && (
+                {currentLocation.name.length > 0 && screenSize > 768 && (
                     <div className='flex items-center justify-center gap-4 px-4 py-2 mt-4 md:text-2xl shadow-md w-full max-w-screen-md mx-auto rounded-md bg-gray-50 dark:bg-slate-600 dark:text-gray-50'>
                         <Map />
                         {screenSize > 768 && <p>Current Location:</p>}

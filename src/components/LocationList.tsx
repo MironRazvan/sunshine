@@ -17,7 +17,7 @@ const LocationList: React.FC<Props> = ({onClick}) => {
                         key={location.id} 
                         className='flex items-center justify-between shadow-md w-full max-w-screen-md m-auto p-4 rounded-md bg-gray-50 gap-4'
                     >
-                        <div className='flex flex-col gap-1'>
+                        <div className='flex flex-col gap-1 mr-auto cursor-pointer w-full' onClick={() => onClick(location)}>
                             <p 
                                 onClick={() => onClick(location)}
                                 className='font-bold cursor-pointer text-1xl md:text-2xl'
@@ -25,9 +25,9 @@ const LocationList: React.FC<Props> = ({onClick}) => {
                                 {location.name}
                             </p>
                             <div className='flex gap-2'>
-                                <p className='text-sm font-thin cursor-pointer' onClick={() => onClick(location)}>{location.region}</p>
+                                <p className='text-sm font-thin cursor-pointer' >{location.region}</p>
                                 <p className='text-sm font-thin cursor-pointer'>-</p>
-                                <p className='text-sm font-thin cursor-pointer' onClick={() => onClick(location)}>{location.country}</p>
+                                <p className='text-sm font-thin cursor-pointer' >{location.country}</p>
                             </div>
                         </div>
                         <button onClick={() => toggleFavoriteLocation(location)}>

@@ -665,6 +665,10 @@ video {
   margin-top: 1rem;
 }
 
+.mr-auto {
+  margin-right: auto;
+}
+
 .flex {
   display: flex;
 }

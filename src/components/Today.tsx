@@ -1,9 +1,11 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import useLocationStore from '../utils/locationStore'
 import { ChevronsDown, ChevronsUp, Sunrise, Sunset } from 'lucide-react'
+import DetailedView from './DetailedView'
 
 const Today: React.FC = () => {
     const { loading, currentLocation, hourlyData, weatherData, fetchTodayWeather, fetchHourlyWeather } = useLocationStore()
+    const [screenSize, setScreenSize] = useState(window.innerWidth)
 
     useEffect(() => {
         if(currentLocation.name && !weatherData.condition?.text?.length && !hourlyData.date?.length) {
@@ -12,6 +14,19 @@ const Today: React.FC = () => {
             fetchHourlyWeather(currentLocation)
         }
     }, [weatherData, hourlyData])
+
+    // useEffect for screen resizing
+    useEffect(() => {
+        const handleResize = () => {
+            setScreenSize(window.innerWidth)
+        }
+
+        window.addEventListener("resize", handleResize)
+
+        return () => {
+            window.removeEventListener("resize", handleResize)
+        }
+    }, [])
 
     const compareTimes = (hour: string) => {
         const sunriseHour = parseInt(hourlyData.astro.sunrise.slice(0, 2))   // Sunrise hour
@@ -64,6 +79,7 @@ const Today: React.FC = () => {
                         </div>
                     )}
                 </div>
+                {(screenSize < 768) && <DetailedView />}
                 <div className='dark:text-gray-50 p-4 grid grid-cols-2 gap-2 md:grid-cols-4 md:max-w-screen-md self-center'>
                     <div className="relative border-2 border-gray-600 rounded-lg mt-2 px-4 pt-4 w-full">
                         <div className="absolute -top-3 left-3 px-1 bg-white text-sm dark:bg-blue-950 dark:text-gray-50">
