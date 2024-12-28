@@ -197,7 +197,7 @@ const useLocationStore = create<Location>((set, get) => ({
         set({loading: true, error: ""})
         try {
             const {lat, lon} = location
-            const response = await fetch(`http://api.weatherapi.com/v1/forecast.json?key=0ee9972de4b34615a3b171137242612&q=${lat},${lon}&days=10&hour=1`)
+            const response = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=0ee9972de4b34615a3b171137242612&q=${lat},${lon}&days=10&hour=1`)
 
             if (!response.ok)
                 throw new Error("Failed to fetch weekly weather data")
