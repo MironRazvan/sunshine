@@ -15,7 +15,7 @@ const LocationList: React.FC<Props> = ({onClick}) => {
                 {locationList.map((location) => (
                     <li 
                         key={location.id} 
-                        className='flex items-center justify-between shadow-md w-full max-w-screen-md m-auto p-4 rounded-md bg-gray-50 gap-4'
+                        className='flex items-center justify-between shadow-md w-full max-w-screen-md m-auto p-4 rounded-md bg-gray-50 gap-4 dark:bg-slate-600 dark:text-gray-50'
                     >
                         <div className='flex flex-col gap-1 mr-auto cursor-pointer w-full' onClick={() => onClick(location)}>
                             <p 

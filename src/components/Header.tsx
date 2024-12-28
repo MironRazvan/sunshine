@@ -30,10 +30,9 @@ const Header: React.FC = () => {
                 <MenuIcon className='self-center dark:text-gray-50'/>
             </div>
             <Menu isOpen={menuOpen} onClose={() => setMenuOpen(false)} anchorElement={buttonRef.current}>
-                <Link to='/' className="text-white border-b-2 border-white w-4/5 no-underline pl-4 mb-4" onClick={() => setMenuOpen(!menuOpen)}>Today</Link>
-                <Link to='/nextweek' className="text-white border-b-2 border-white w-full no-underline pl-4 mb-4" onClick={() => setMenuOpen(!menuOpen)}>Next Week</Link>
+                <Link to='/' className="text-white border-b-2 border-white w-4/5 no-underline pl-4 mb-4" onClick={() => setMenuOpen(!menuOpen)}>Weather Details</Link>
                 <Link to='/favorites' className="text-white border-b-2 border-white w-full no-underline pl-4 mb-4" onClick={() => setMenuOpen(!menuOpen)}>Favorites</Link>
-                <Link to='/about' className="text-white border-b-2 border-white w-full no-underline pl-4 " onClick={() => setMenuOpen(!menuOpen)}>About Me</Link>
+                <Link to='/about' className="text-white border-b-2 border-white w-full no-underline pl-4 " onClick={() => setMenuOpen(!menuOpen)}>About</Link>
             </Menu>
             <div className='p-2 min-w-max m-auto md:m-0 rounded-md text-center flex gap-1'>
                 <h3 className='self-center text-2xl md:text-3xl dark:text-gray-50 font-["Carattere"]' onClick={isScreenSmall ? () => navigate('/') : undefined}>Sunshine</h3>
@@ -44,7 +43,7 @@ const Header: React.FC = () => {
                 <h3 className='flex-1 text-center py-2 bg-inherit hover:bg-slate-200 dark:hover:bg-slate-600 transition cursor-pointer' onClick={handleLinkClick} title='/'>Today</h3>
                 <h3 className='flex-1 text-center py-2 bg-inherit hover:bg-slate-200 dark:hover:bg-slate-600 transition cursor-pointer' onClick={handleLinkClick} title='/nextweek'>Next Week</h3>
                 <h3 className='flex-1 text-center py-2 bg-inherit hover:bg-slate-200 dark:hover:bg-slate-600 transition cursor-pointer' onClick={handleLinkClick} title='/favorites'>Favorites</h3>
-                <h3 className='flex-1 text-center py-2 bg-inherit hover:bg-slate-200 dark:hover:bg-slate-600 transition cursor-pointer' onClick={handleLinkClick} title='/about'>About Me</h3>
+                <h3 className='flex-1 text-center py-2 bg-inherit hover:bg-slate-200 dark:hover:bg-slate-600 transition cursor-pointer' onClick={handleLinkClick} title='/about'>About</h3>
             </div>
             <div className='border-2 shadow-md px-2 md:px-4 py-2 min-w-max rounded-md text-center justify-center flex flex-col cursor-pointer dark:text-gray-50' onClick={handleLinkClick} title='location'>
                 <MapPin className='self-center dark:text-gray-50' />

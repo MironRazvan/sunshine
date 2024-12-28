@@ -78,8 +78,8 @@ const LocationForm: React.FC = () => {
                     onChange={handleChange}
                     className='pr-10 pl-4 py-2 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-800 darkLtext-gray-50'
                 />
-                <button type='submit' className='absolute inset-y-0 right-4 pr-3 flex items-center'>
-                    <Search />
+                <button type='submit' className='absolute inset-y-0 right-4 pr-3 flex items-center dark:text-black'>
+                    <Search className='dark:stroke-gray-50' />
                 </button>
             </form>
             <br className='w-full'/>
