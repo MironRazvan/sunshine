@@ -139,7 +139,7 @@ const DetailedDayData: React.FC = () => {
 				acc > reducer.windchill_c ? (acc = reducer.windchill_c) : acc,
 			Infinity
 		)
-		return maxTemp - maxWindchill
+		return Math.round((maxTemp - maxWindchill) * 2) / 2
 	}
 
 	return (
