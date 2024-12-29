@@ -53,18 +53,34 @@ export interface WeeklyData {
     daily: {
         date: string,
         date_epoch: number,
+        astro: {
+            sunset: string,
+            sunrise: string,
+            moon_phase: string,
+        },
         day: {
             avgtemp_c: number,
             maxtemp_c: number,
             mintemp_c: number,
+            avghumidity: number,
+            avgvis_km: number,
+            maxwind_kph: number,
+            uv: number,
             condition: {
                 icon: string,
                 text: string,
             }
         },
         hour: {
+            dewpoint_c: number,
             chance_of_rain: number,
             chance_of_snow: number,
+            time: string,
+            temp_c: number,
+            condition: {
+                icon: string,
+                text: string,
+            },
         }[],
     }[],
 }
@@ -200,7 +216,7 @@ const useLocationStore = create<Location>((set, get) => ({
         set({loading: true, error: ""})
         try {
             const {lat, lon} = location
-            const response = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=0ee9972de4b34615a3b171137242612&q=${lat},${lon}&days=10&hour=1`)
+            const response = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=0ee9972de4b34615a3b171137242612&q=${lat},${lon}&days=10&hours=24`)
 
             if (!response.ok)
                 throw new Error("Failed to fetch weekly weather data")

@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import useLocationStore from '../utils/locationStore'
 import { Map } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
-const DetailedView: React.FC = () => {
+const WeeklyData: React.FC = () => {
+    const navigate = useNavigate()
     const { currentLocation, loading, weeklyData, fetchWeeklyWeather } = useLocationStore()
     const [isLoaded, setIsLoaded] = useState(false)
     const [screenSize, setScreenSize] = useState(window.innerWidth)
@@ -58,6 +60,10 @@ const DetailedView: React.FC = () => {
         return ((Math.round(end) - minTemp) / range) * 100
     }
 
+    const handleDayClick = (day: typeof weeklyData[0]['daily'][0]) => {
+        navigate('/nextweek/details', {state: day})
+    }
+
     return (
         currentLocation.name && weeklyData ? (
             <div className='flex-1 flex flex-col dark:bg-blue-950 dark:text-gray-50'>
@@ -75,8 +81,11 @@ const DetailedView: React.FC = () => {
                 <div className='flex flex-col items-center divide-y'>
                 {
                     weeklyData[0]?.daily?.map((info) => (
-                        <div key={info.date_epoch} className='grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 px-4 py-4 md:max-w-screen-md w-screen'>
-                            <p className='font-bold'>{weekdayConverter(info.date)}</p>
+                        <div key={info.date_epoch} className='grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 px-4 py-4 md:max-w-screen-md w-screen' onClick={() => handleDayClick(info)}>
+                            <div className='flex flex-col'>
+                                <p className='font-bold'>{weekdayConverter(info.date)}</p>
+                                <span className='text-xs italic text-opacity-70'>{info.date.slice(5, info.date.length)}</span>
+                            </div>
                             <div className='w-8 aspect-square'>
                                 <img src={info.day.condition.icon} alt="Weather Icon" className='w-full h-full object-contain' />
                             </div>
@@ -112,4 +121,4 @@ const DetailedView: React.FC = () => {
     )
 }
 
-export default DetailedView
+export default WeeklyData

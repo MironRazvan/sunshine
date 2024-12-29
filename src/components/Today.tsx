@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import useLocationStore from '../utils/locationStore'
 import { ChevronsDown, ChevronsUp, Sunrise, Sunset } from 'lucide-react'
-import DetailedView from './DetailedView'
+import WeeklyData from './WeeklyData'
 import ReactLoading from 'react-loading'
 
 const Today: React.FC = () => {
@@ -71,7 +71,7 @@ const Today: React.FC = () => {
                     </div>
                 </div>
                 <div 
-                    className='flex w-full self-center overflow-x-auto whitespace-nowrap divide-gray-400 divide-x divide-opacity-70 p-4 md:max-w-screen-md scrollbar-hide'
+                    className='flex w-full self-center bg-slate-700 rounded-md overflow-x-auto whitespace-nowrap divide-gray-400 divide-x divide-opacity-70 py-4 md:max-w-screen-md scrollbar-hide'
                     style={{scrollbarWidth: 'none', msOverflowStyle: 'none'}}
                 >
                     {hourlyData.hour.map((hour) => 
@@ -86,13 +86,14 @@ const Today: React.FC = () => {
                                                 <img src={hour.condition.icon} alt="Hourly Weather Icon" className='w-full h-full object-contain'/>
                                     }
                                 </div>
-                                <p className='dark:text-gray-50 text-xs'>{hour.chance_of_rain >= hour.chance_of_snow ? (hour.chance_of_rain === 0 ? <p className='opacity-0'>-</p> : `${hour.chance_of_rain}%`) : (hour.chance_of_snow === 0 ? <p className='opacity-0'>-</p> : `${hour.chance_of_snow}%`)}</p>
+                                <p className='dark:text-gray-50 text-xs'>{hour.chance_of_rain >= hour.chance_of_snow ? (hour.chance_of_rain === 0 ? undefined : hour.chance_of_rain) : (hour.chance_of_snow === 0 ? undefined : hour.chance_of_snow)}</p>
+                                {/* <p className='dark:text-gray-50 text-xs'>{hour.chance_of_rain >= hour.chance_of_snow ? (hour.chance_of_rain === 0 ? <p className='opacity-0'>-</p> : `${hour.chance_of_rain}%`) : (hour.chance_of_snow === 0 ? <p className='opacity-0'>-</p> : `${hour.chance_of_snow}%`)}</p> */}
                             </div>
                             <p className='dark:text-gray-50'>{Math.round(hour.temp_c * 2) / 2}°</p>
                         </div>
                     )}
                 </div>
-                {(screenSize < 768) && <DetailedView />}
+                {(screenSize < 768) && <WeeklyData />}
                 <div className='dark:text-gray-50 p-4 grid grid-cols-2 gap-2 md:grid-cols-4 md:max-w-screen-md self-center'>
                     <div className="relative border-2 border-gray-600 rounded-lg mt-2 px-4 pt-4 w-full">
                         <div className="absolute -top-3 left-3 px-1 bg-white text-sm dark:bg-blue-950 dark:text-gray-50">
