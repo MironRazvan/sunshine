@@ -71,7 +71,7 @@ const Today: React.FC = () => {
                     </div>
                 </div>
                 <div 
-                    className='flex w-full self-center bg-slate-700 rounded-md overflow-x-auto whitespace-nowrap divide-gray-400 divide-x divide-opacity-70 py-4 md:max-w-screen-md scrollbar-hide'
+                    className='flex w-full self-center dark:bg-slate-700 rounded-md overflow-x-auto whitespace-nowrap divide-gray-400 divide-x divide-opacity-70 py-4 md:max-w-screen-md scrollbar-hide'
                     style={{scrollbarWidth: 'none', msOverflowStyle: 'none'}}
                 >
                     {hourlyData.hour.map((hour) => 
