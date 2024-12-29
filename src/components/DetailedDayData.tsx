@@ -6,8 +6,10 @@ import HourlySlider from "./HourlySlider"
 import {
 	ChevronDown,
 	Star,
+	Telescope,
 	Thermometer,
 	ThermometerSun,
+	Umbrella,
 	Wind,
 } from "lucide-react"
 
@@ -18,31 +20,49 @@ const DetailedDayData: React.FC = () => {
 		item.time.slice(item.time.length - 5)
 	)
 
-	const uvArray = state.hour.map((item) => item.uv)
-	const windArray = state.hour.map((item) => Math.floor(item.wind_kph))
 	const [dataToSend, setDataToSend] = useState({
-		info: windArray,
+		info: state.hour.map((item) => Math.floor(item.wind_kph)),
 		title: "Wind",
+		labels: labels,
 	})
 
-	const dataMapping: { [key in string]: { info: number[]; title: string } } =
-		{
-			Wind: {
-				info: windArray,
-				title: "Wind",
-			},
-			UV: {
-				info: uvArray,
-				title: "UV",
-			},
-			Temp: {
-				info: state.hour.map((item) => item.temp_c),
-				title: "Temp",
-			},
-		}
+	const dataMapping: {
+		[key in string]: { info: number[]; title: string; labels: string[] }
+	} = {
+		Wind: {
+			info: state.hour.map((item) => Math.floor(item.wind_kph)),
+			title: "Wind",
+			labels: state.hour.map((item) => item.wind_dir),
+		},
+		UV: {
+			info: state.hour.map((item) => item.uv),
+			title: "UV",
+			labels: labels,
+		},
+		Temp: {
+			info: state.hour.map((item) => item.temp_c),
+			title: "Temp",
+			labels: labels,
+		},
+		Precip: {
+			info: state.hour.map((item) =>
+				item.chance_of_rain > item.chance_of_snow
+					? item.chance_of_rain
+					: item.chance_of_snow
+			),
+			title: "Precip",
+			labels: labels,
+		},
+		Visibility: {
+			info: state.hour.map((item) => item.vis_km),
+			title: "Visibility",
+			labels: labels,
+		},
+	}
 
+	const menuOptions = ["Wind", "Temp", "UV", "Precip", "Visibility"]
 	const [isMenuOpen, setIsMenuOpen] = useState(false)
-	const menuOptions = ["Wind", "Temp", "UV"]
+
 	const getIcon = (opt: string) => {
 		switch (opt) {
 			case "Wind":
@@ -63,6 +83,18 @@ const DetailedDayData: React.FC = () => {
 						<ThermometerSun className="w-full h-full object-contain" />
 					</div>
 				)
+			case "Precip":
+				return (
+					<div className="w-4 aspect-square">
+						<Umbrella className="w-full h-full object-contain" />
+					</div>
+				)
+			case "Visibility":
+				return (
+					<div className="w-4 aspect-square">
+						<Telescope className="w-full h-full object-contain" />
+					</div>
+				)
 			default:
 				return (
 					<div className="w-4 h-4">
@@ -74,7 +106,6 @@ const DetailedDayData: React.FC = () => {
 	const [selected, setSelected] = useState<string>(menuOptions[0] as string)
 
 	useEffect(() => {
-		console.log(selected)
 		setDataToSend(dataMapping[selected])
 	}, [selected])
 
@@ -97,24 +128,23 @@ const DetailedDayData: React.FC = () => {
 		return receivedDate.toUTCString().slice(4, 11)
 	}
 
+	const windChillDifference = (userInput: WeeklyData["daily"][0]["hour"]) => {
+		const maxTemp = userInput.reduce(
+			(acc, reducer) =>
+				acc > reducer.temp_c ? (acc = reducer.temp_c) : acc,
+			Infinity
+		)
+		const maxWindchill = userInput.reduce(
+			(acc, reducer) =>
+				acc > reducer.windchill_c ? (acc = reducer.windchill_c) : acc,
+			Infinity
+		)
+		return maxTemp - maxWindchill
+	}
+
 	return (
 		<div className="flex flex-col flex-1 dark:bg-blue-950 dark:text-gray-50 items-center gap-8">
 			<div className="flex justify-between items-end w-full md:w-3/5 p-4 my-8">
-				<div className="flex flex-col items-center">
-					<h2 className="text-xl">{dateFormatter(state.date)}</h2>
-					<span>{weekdayConverter(state.date)}</span>
-				</div>
-				<div>
-					<span className="flex items-end gap-1">
-						<p className="text-xl text-opacity-50">
-							{Math.round(state.day.mintemp_c)}°
-						</p>
-						<p className="text-xl">/</p>
-						<p className="text-3xl m-0 p-0">
-							{Math.round(state.day.maxtemp_c)}°
-						</p>
-					</span>
-				</div>
 				<div className="flex flex-col items-center">
 					<div className="h-8 w-8">
 						<img
@@ -124,6 +154,21 @@ const DetailedDayData: React.FC = () => {
 						/>
 					</div>
 					<p>{state.day.condition.text}</p>
+				</div>
+				<div>
+					<span className="flex items-end gap-1">
+						<p className="text-3xl m-0 p-0">
+							{Math.round(state.day.maxtemp_c)}°
+						</p>
+						<p className="text-xl">/</p>
+						<p className="text-xl text-opacity-50">
+							{Math.round(state.day.mintemp_c)}°
+						</p>
+					</span>
+				</div>
+				<div className="flex flex-col items-center">
+					<h2 className="text-xl">{dateFormatter(state.date)}</h2>
+					<span>{weekdayConverter(state.date)}</span>
 				</div>
 			</div>
 			<div className="dark:text-gray-50 py-4 px-1 md:px-4 grid grid-cols-3 gap-2 md:grid-cols-4 w-full md:w-3/5 self-center">
@@ -158,13 +203,33 @@ const DetailedDayData: React.FC = () => {
 						</p>
 					</div>
 				</div>
+				<div className="relative border-2 border-gray-600 rounded-lg mt-2 px-4 pt-4 w-full col-span-3 md:col-span-4">
+					<div className="absolute -top-3 left-3 px-1 bg-white text-sm dark:bg-blue-950 dark:text-gray-50">
+						<span className="dark:text-gray-50">Windchill</span>
+					</div>
+					<div className="flex">
+						<p className="pb-2 text-sm sm:text-base my-auto mr-auto">
+							Max Windchill:{" -"}
+							{windChillDifference(state.hour)}°
+						</p>
+						{windChillDifference(state.hour) > 2 ? (
+							<span className="text-xs italic opacity-60 pb-1">
+								Wind is making it feel colder.
+							</span>
+						) : (
+							<span className="text-xs italic opacity-60 pb-1">
+								Similar to actual temperature.
+							</span>
+						)}
+					</div>
+				</div>
 				<div className="relative border-2 border-gray-600 rounded-lg mt-2 px-4 pt-4 w-full col-span-3 md:col-span-3">
 					<div className="absolute -top-3 left-3 px-1 bg-white text-sm dark:bg-blue-950 dark:text-gray-50">
-						<span className="dark:text-gray-50">Other</span>
+						<span className="dark:text-gray-50">UV</span>
 					</div>
 					<div>
 						<p className="pb-2 text-sm sm:text-base">
-							Max UV index: {Math.round(state.day.uv)}
+							Average UV index: {Math.round(state.day.uv)}
 						</p>
 					</div>
 				</div>
@@ -221,7 +286,7 @@ const DetailedDayData: React.FC = () => {
 			<div className="w-full md:max-w-screen-md flex items-center">
 				<Graph
 					dataArray={dataToSend.info}
-					labels={labels}
+					labels={dataToSend.labels}
 					title={dataToSend.title}
 				/>
 			</div>

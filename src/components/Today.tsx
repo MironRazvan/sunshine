@@ -19,17 +19,12 @@ const Today: React.FC = () => {
 	const [screenSize, setScreenSize] = useState(window.innerWidth)
 
 	useEffect(() => {
-		if (
-			currentLocation.name &&
-			!weatherData.condition?.text?.length &&
-			!hourlyData.date?.length
-		) {
-			console.log("Fetching weather data...")
+		if (currentLocation.name) {
 			fetchTodayWeather(currentLocation)
 			fetchHourlyWeather(currentLocation)
 			fetchWeeklyWeather(currentLocation)
 		}
-	}, [weatherData, hourlyData, currentLocation])
+	}, [currentLocation])
 
 	useEffect(() => {
 		if (weeklyData[0]?.name !== currentLocation?.name) {
@@ -56,9 +51,7 @@ const Today: React.FC = () => {
 		<div className="flex flex-col flex-1 dark:bg-blue-950 align-middle justify-center items-center">
 			<ReactLoading type="bubbles" />
 		</div>
-	) : currentLocation.name &&
-	  weatherData.condition?.text?.length &&
-	  hourlyData.date ? (
+	) : currentLocation.name && hourlyData.date && weatherData.condition ? (
 		<div className="flex flex-col flex-1 dark:bg-blue-950">
 			<div className="flex flex-col items-center justify-center shadow-lg md:max-w-screen-sm dark:bg-slate-600 dark:text-gray-50 w-full h-max mx-auto p-4 my-4 rounded-md bg-sky-100 overflow-y-auto">
 				<h1 className="font-bold text-2xl md:text-3xl">

@@ -1,65 +1,59 @@
 import { create } from "zustand"
 
-export interface LocationProps {
-	id: number
-	name: string
-	region: string
-	country: string
-	lat: number
-	lon: number
+interface WeatherCondition {
+	icon: string
+	text: string
 }
 
-export interface WeatherData {
+interface AstroData {
+	sunset: string
+	sunrise: string
+	moon_phase: string
+}
+
+interface BaseWeatherData {
 	temp_c: number
-	feelslike_c: number
 	wind_kph: number
 	wind_dir: string
+	uv: number
+	condition: WeatherCondition
+}
+
+export interface WeatherData extends BaseWeatherData {
+	feelslike_c: number
 	gust_kph: number
 	pressure_mb: number
-	uv: number
 	humidity: number
 	dewpoint_c: number
 	precip_mm: number
-	condition: {
-		icon: string
-		text: string
-	}
+}
+
+interface HourData extends BaseWeatherData {
+	dewpoint_c: number
+	chance_of_rain: number
+	chance_of_snow: number
+	time: string
+	windchill_c: number
+	vis_km: number
+}
+
+interface DayData {
+	avgtemp_c: number
+	maxtemp_c: number
+	mintemp_c: number
+	avghumidity: number
+	avgvis_km: number
+	maxwind_kph: number
+	uv: number
+	condition: WeatherCondition
 }
 
 export interface HourlyData {
 	date: string
 	date_epoch: number
-	astro: {
-		sunset: string
-		sunrise: string
-		moon_phase: string
-	}
-	day: {
-		avgtemp_c: number
-		maxtemp_c: number
-		mintemp_c: number
-		avghumidity: number
-		avgvis_km: number
-		maxwind_kph: number
-		uv: number
-		condition: {
-			icon: string
-			text: string
-		}
-	}
-	hour: {
-		dewpoint_c: number
-		chance_of_rain: number
-		chance_of_snow: number
-		time: string
-		temp_c: number
-		uv: number
-		wind_kph: number
-		condition: {
-			icon: string
-			text: string
-		}
-	}[]
+	astro: AstroData
+	day: DayData
+	hour: HourData[]
 }
 
 export interface WeeklyData {
@@ -67,38 +61,19 @@ export interface WeeklyData {
 	daily: {
 		date: string
 		date_epoch: number
-		astro: {
-			sunset: string
-			sunrise: string
-			moon_phase: string
-		}
-		day: {
-			avgtemp_c: number
-			maxtemp_c: number
-			mintemp_c: number
-			avghumidity: number
-			avgvis_km: number
-			maxwind_kph: number
-			uv: number
-			condition: {
-				icon: string
-				text: string
-			}
-		}
-		hour: {
-			dewpoint_c: number
-			chance_of_rain: number
-			chance_of_snow: number
-			time: string
-			temp_c: number
-			uv: number
-			wind_kph: number
-			condition: {
-				icon: string
-				text: string
-			}
-		}[]
+		astro: AstroData
+		day: DayData
+		hour: HourData[]
 	}[]
+}
+
+export interface LocationProps {
+	id: number
+	name: string
+	region: string
+	country: string
+	lat: number
+	lon: number
 }
 
 interface Location {
@@ -123,60 +98,87 @@ interface Location {
 	fetchWeeklyWeather: (location: LocationProps) => Promise<void> // fetches weekly weather data from the API
 }
 
+const API_CONFIG = {
+	BASE_URL: "https://api.weatherapi.com/v1",
+	KEY: "0ee9972de4b34615a3b171137242612",
+	endpoints: {
+		search: "/search.json",
+		current: "/current.json",
+		forecast: "/forecast.json",
+	},
+} as const
+
+const storage = {
+	getItem: (key: string, defaultValue: any = "{}") =>
+		JSON.parse(localStorage.getItem(key) || defaultValue),
+	setItem: (key: string, value: any) =>
+		localStorage.setItem(key, JSON.stringify(value)),
+}
+
+const fetchFromAPI = async (
+	endpoint: string,
+	params: Record<string, string>
+) => {
+	const queryString = new URLSearchParams({
+		key: API_CONFIG.KEY,
+		...params,
+	}).toString()
+
+	const response = await fetch(
+		`${API_CONFIG.BASE_URL}${endpoint}?${queryString}`
+	)
+
+	if (!response.ok) {
+		throw new Error(`Failed to fetch from ${endpoint}`)
+	}
+
+	return response.json()
+}
+
 const useLocationStore = create<Location>((set, get) => ({
-	currentLocation: JSON.parse(
-		localStorage.getItem("lastWeatherLocation") || "{}"
-	),
+	currentLocation: storage.getItem("lastWeatherLocation"),
 	locationList: [],
-	favoriteLocations: JSON.parse(
-		localStorage.getItem("favoriteLocations") || "[]"
-	),
+	favoriteLocations: storage.getItem("favoriteLocations", "[]"),
 	weatherData: {} as WeatherData,
 	hourlyData: {} as HourlyData,
 	weeklyData: [] as WeeklyData[],
 	loading: false,
 	error: "",
+
 	setCurrentLocation: (location: LocationProps) => {
-		set(() => {
-			localStorage.setItem(
-				"lastWeatherLocation",
-				JSON.stringify(location)
-			)
-			return { currentLocation: location }
-		})
+		storage.setItem("lastWeatherLocation", location)
+		set({ currentLocation: location })
 	},
-	clearCurrentLocation: () => {
-		set({ currentLocation: {} as LocationProps })
-	},
-	clearLocationsList: () => {
-		set({ locationList: [] })
-	},
+
+	clearCurrentLocation: () => set({ currentLocation: {} as LocationProps }),
+	clearLocationsList: () => set({ locationList: [] }),
+
 	fetchLocationList: async (location: string) => {
 		set({ loading: true, error: "" })
 		try {
-			const response = await fetch(
-				`https://api.weatherapi.com/v1/search.json?key=0ee9972de4b34615a3b171137242612&q=${location}`
-			)
-			if (!response.ok) {
-				throw new Error("Failed to fetch location list")
-			}
-			const data = await response.json()
+			const data = await fetchFromAPI(API_CONFIG.endpoints.search, {
+				q: location,
+			})
 			set({ locationList: data, loading: false })
 		} catch (error: any) {
 			set({ error: error.message, loading: false })
 		}
 	},
+
 	isFavorite: (location: LocationProps) => {
 		return get().favoriteLocations.includes(location)
 	},
+
 	toggleFavoriteLocation: (location: LocationProps) => {
-		const isFavorite = get().favoriteLocations.includes(location)
-		if (isFavorite) {
-			get().removeFavoriteLocation(location)
-		} else {
-			get().addFavoriteLocation(location)
-		}
+		const { favoriteLocations } = get()
+		const updatedFavorites = favoriteLocations.includes(location)
+			? favoriteLocations.filter((loc) => loc.id !== location.id)
+			: [...favoriteLocations, location]
+
+		storage.setItem("favoriteLocations", updatedFavorites)
+		set({ favoriteLocations: updatedFavorites })
 	},
+
 	addFavoriteLocation: (location: LocationProps) => {
 		set((state) => {
 			const favs = state.favoriteLocations
@@ -203,36 +205,26 @@ const useLocationStore = create<Location>((set, get) => ({
 			return { favoriteLocations }
 		})
 	},
+
 	fetchTodayWeather: async (location: LocationProps) => {
 		set({ loading: true, error: "" })
 		try {
-			const { lat, lon } = location
-			const response = await fetch(
-				`https://api.weatherapi.com/v1/current.json?key=0ee9972de4b34615a3b171137242612&q=${lat},${lon}`
-			)
-
-			if (!response.ok) {
-				throw new Error("Failed to fetch weather data")
-			}
-
-			const data = await response.json()
+			const data = await fetchFromAPI(API_CONFIG.endpoints.current, {
+				q: `${location.lat},${location.lon}`,
+			})
 			set({ weatherData: data.current, loading: false })
 		} catch (error: any) {
 			set({ error: error.message, loading: false })
 		}
 	},
+
 	fetchHourlyWeather: async (location: LocationProps) => {
 		set({ loading: true, error: "" })
 		try {
-			const { lat, lon } = location
-			const response = await fetch(
-				`https://api.weatherapi.com/v1/forecast.json?key=0ee9972de4b34615a3b171137242612&q=${lat},${lon}&days=2`
-			)
-			if (!response.ok) {
-				throw new Error("Failed to fetch hourly weather data")
-			}
-			const data = await response.json()
-
+			const data = await fetchFromAPI(API_CONFIG.endpoints.forecast, {
+				q: `${location.lat},${location.lon}`,
+				days: "2",
+			})
 			// calculating the next 24h from the current time
 			const currentHour = new Date().getHours()
 			const todayHours: HourlyData["hour"] =
@@ -248,29 +240,27 @@ const useLocationStore = create<Location>((set, get) => ({
 			// adding the next 24h to the forecast object
 			const forecast = data.forecast.forecastday[0]
 			forecast.hour = next24Hours
-
 			set({ hourlyData: forecast, loading: false })
 		} catch (error: any) {
 			set({ error: error.message, loading: false })
 		}
 	},
+
 	fetchWeeklyWeather: async (location: LocationProps) => {
 		set({ loading: true, error: "" })
 		try {
-			const { lat, lon } = location
-			const response = await fetch(
-				`https://api.weatherapi.com/v1/forecast.json?key=0ee9972de4b34615a3b171137242612&q=${lat},${lon}&days=10&hours=24`
-			)
-
-			if (!response.ok)
-				throw new Error("Failed to fetch weekly weather data")
-
-			const data = await response.json()
-			const newObj = {
-				daily: data.forecast.forecastday,
-				name: data.location.name,
-			}
-			set({ loading: false, weeklyData: [newObj] })
+			const data = await fetchFromAPI(API_CONFIG.endpoints.forecast, {
+				q: `${location.lat},${location.lon}`,
+				days: "10",
+				hours: "24",
+			})
+			const newObj: WeeklyData[] = [
+				{
+					daily: data.forecast.forecastday,
+					name: data.location.name,
+				},
+			]
+			set({ weeklyData: newObj, loading: false })
 		} catch (error: any) {
 			set({ error: error.message, loading: false })
 		}
