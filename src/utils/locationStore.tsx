@@ -254,13 +254,14 @@ const useLocationStore = create<Location>((set, get) => ({
 				days: "10",
 				hours: "24",
 			})
-			const newObj: WeeklyData[] = [
+			const weeklyData: WeeklyData[] = [
 				{
 					daily: data.forecast.forecastday,
 					name: data.location.name,
 				},
 			]
-			set({ weeklyData: newObj, loading: false })
+
+			set({ weeklyData, loading: false, error: "" })
 		} catch (error: any) {
 			set({ error: error.message, loading: false })
 		}

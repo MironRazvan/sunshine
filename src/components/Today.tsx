@@ -4,6 +4,7 @@ import { ChevronsDown, ChevronsUp } from "lucide-react"
 import WeeklyData from "./WeeklyData"
 import ReactLoading from "react-loading"
 import HourlySlider from "./HourlySlider"
+import { debounce } from "chart.js/helpers"
 
 const Today: React.FC = () => {
 	const {
@@ -34,11 +35,11 @@ const Today: React.FC = () => {
 		}
 	}, [])
 
-	// useEffect for screen resizing
+	// // useEffect for screen resizing
 	useEffect(() => {
-		const handleResize = () => {
+		const handleResize = debounce(() => {
 			setScreenSize(window.innerWidth)
-		}
+		}, 400)
 
 		window.addEventListener("resize", handleResize)
 

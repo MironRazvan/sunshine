@@ -23,17 +23,18 @@ const WeeklyData: React.FC = () => {
 	const maxTemp = Math.round(Math.max(...baseMaxTemperatures))
 
 	// Initial fetch
-	useEffect(() => {
-		if (currentLocation.name) {
-			fetchWeeklyWeather(currentLocation)
-		}
-	}, [currentLocation])
+	// useEffect(() => {
+	// 	if (currentLocation.name) {
+	// 		fetchWeeklyWeather(currentLocation)
+	// 	}
+	// }, [currentLocation])
 
 	// Backup fetch for data persistence
 	useEffect(() => {
 		if (currentLocation.name && !weeklyData[0]?.name && !isLoaded) {
 			fetchWeeklyWeather(currentLocation)
 			setIsLoaded(true)
+			console.log("in weeklydata")
 		}
 	}, [currentLocation, weeklyData])
 
